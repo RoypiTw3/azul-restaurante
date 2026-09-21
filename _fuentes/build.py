@@ -18,6 +18,7 @@ WA_TEL = '+57 323 510 5573'
 WA_RESERVA = f'https://wa.me/{WA_NUM}?text=Hola%2C%20Azul.%20Quiero%20reservar%20una%20mesa.'
 WA_EVENTO = f'https://wa.me/{WA_NUM}?text=Hola%2C%20Azul.%20Quiero%20informaci%C3%B3n%20para%20una%20celebraci%C3%B3n.'
 WA_CUENCOS = f'https://wa.me/{WA_NUM}?text=Hola%2C%20Azul.%20Quiero%20saber%20sobre%20los%20cuencos%20de%20mediod%C3%ADa.'
+WA_DIA = f'https://wa.me/{WA_NUM}?text=Hola%2C%20Azul.%20Quiero%20reservar%20el%20men%C3%BA%20del%20d%C3%ADa.'
 WA_CLANDESTINO = f'https://wa.me/{WA_NUM}?text=Hola%2C%20Azul.%20Quiero%20reservar%20y%20preguntar%20por%20los%20clandestinos.'
 IG = 'https://www.instagram.com/azulrestaurantecali/'
 FB = 'https://www.facebook.com/azulclandestino/'
@@ -55,6 +56,29 @@ TAG_HOT = f'<span class="tag tag--hot" title="Picante">{CHILI}</span>'
 # Etiquetas: 'veg' (opción vegana, hoja) y 'hot' (picante, ají), tal como en la carta.
 
 MENU = [
+    dict(id='menu-del-dia', title='Menú del día',
+         note='Trilogía de aromas · Almuerzo en Azul con aromas del Mediterráneo, la India y el norte de África.',
+         text='Nuestra propuesta especial de mediodía: Trilogía de aromas. Incluye cóctel de bienvenida, trío de entradas a bocados, plato fuerte a elegir y postre de la casa. Pregúntanos por WhatsApp para consultar disponibilidad o reservar tu mesa.',
+         wa_url=WA_DIA,
+         wa_label='Preguntar o reservar el menú del día',
+         blocks=[
+             dict(title='Bienvenida', items=[
+                 ('Cóctel de bienvenida', '', 'Abrebocas especial de la casa para iniciar la experiencia.'),
+             ]),
+             dict(title='Entrada · Trío a bocados', note='Selección especial de la cocina', items=[
+                 ('Tortilla de papa con champiñones al ajillo', '', 'Tortilla española clásica con champiñones salteados al ajillo.'),
+                 ('Tapa escalivada', '', 'Vegetales asados al horno sobre pan artesanal.', 'veg'),
+                 ('Tortilla de papa con zorza de chorizo', '', 'Tortilla española con picadillo tradicional de chorizo especiado.'),
+             ]),
+             dict(title='Plato fuerte', note='Elige una opción', items=[
+                 ('Paella de pastoreo', '', 'Arroz al estilo de pastoreo preparado con carnes y aromas del campo.'),
+                 ('Paella de mar', '', 'Arroz marinero tradicional con variedad de mariscos frescos y especias de la casa.'),
+             ]),
+             dict(title='Postre', items=[
+                 ('Torta de quesos y manzanas', '', 'Torta artesanal de la casa elaborada con quesos suaves y manzanas caramelizadas.'),
+             ]),
+         ]),
+
     dict(id='entradas', title='Entradas', blocks=[dict(items=[
         ('Berenjenas Casa Blanca', '48.000', 'Berenjena ahumada, menta, tomate, aceitunas negras, queso de cabra.', 'veg'),
         ('Pulpo con aroma mediterráneo', '68.000', 'Pulpo asado, apio, aceitunas negras, aceitunas kalamata, vinagreta de limón.'),
@@ -245,7 +269,7 @@ def item_html(name, price, desc, tags=''):
 def block_html(b):
     out = '<div class="menu-sub">'
     if b.get('title'):
-        note = f'<span class="menu-sub__note">{html.escape(b["note"])}</span>' if b.get('note') else ''
+        note = f' <span class="menu-sub__note">· {html.escape(b["note"])}</span>' if b.get('note') else ''
         out += f'<h4 class="label menu-sub__title">{html.escape(b["title"])}{note}</h4>'
     elif b.get('note'):
         out += f'<p class="menu-cat__note">{html.escape(b["note"])}</p>'
@@ -258,9 +282,11 @@ def cat_html(c):
     out = f'<section class="menu-cat" id="{c["id"]}">'
     out += f'<div class="menu-cat__head"><h2 class="menu-cat__title">{html.escape(c["title"])}</h2>{note}</div>'
     if c.get('text'):
-        out += f'<div class="menu-clandestino"><p class="lede">{html.escape(c["text"])}</p><a class="arrow-link on-light" href="{WA_CLANDESTINO}" target="_blank" rel="noopener">Reservar y preguntar {ARROW}</a></div>'
+        wa_url = c.get('wa_url', WA_CLANDESTINO)
+        wa_label = c.get('wa_label', 'Reservar y preguntar')
+        out += f'<div class="menu-clandestino"><p class="lede">{html.escape(c["text"])}</p><a class="arrow-link on-light" href="{wa_url}" target="_blank" rel="noopener">{wa_label} {ARROW}</a></div>'
     blocks = c['blocks']
-    if len(blocks) > 1 and c['id'] in ('cocteles', 'vinos', 'licores', 'bebidas'):
+    if len(blocks) > 1 and c['id'] in ('cocteles', 'vinos', 'licores', 'bebidas', 'menu-del-dia'):
         out += '<div class="menu-cat__cols">' + ''.join(block_html(b) for b in blocks) + '</div>'
     else:
         out += ''.join(block_html(b) for b in blocks)
@@ -545,8 +571,8 @@ def page_index():
           <div class="exp-item__body">
             <h3 class="exp-item__title">Cuencos de mediodía</h3>
             <span class="label exp-item__sub">Al almuerzo</span>
-            <p class="exp-item__text">Al mediodía Azul tiene una propuesta propia, los cuencos de mediodía. La carta del día se publica aparte; consúltala o pregúntanos por WhatsApp.</p>
-            <a class="arrow-link on-light ext" href="{CANVA_DIA}" target="_blank" rel="noopener">Ver el menú del día {EXT}</a>
+            <p class="exp-item__text">Al mediodía Azul tiene una propuesta propia, los cuencos de mediodía y la Trilogía de aromas con opciones frescas del día.</p>
+            <a class="arrow-link on-light" href="menu.html#menu-del-dia">Ver el menú del día {ARROW}</a>
           </div>
         </article>
       </div>
@@ -576,7 +602,7 @@ def page_menu():
     nav = ''.join(f'<a href="#{c["id"]}">{html.escape(c["title"])}</a>' for c in MENU)
     cats = ''.join(cat_html(c) for c in MENU)
     return head('Carta · Azul Restaurante, San Antonio, Cali',
-                'Carta completa de Azul: entradas para compartir, sopas, ensaladas, cordero, arroces, pollo, pescado, pastas, postres, cócteles, sangría, vinos y licores. Precios en pesos colombianos.',
+                'Carta completa de Azul: menú del día, entradas para compartir, sopas, ensaladas, cordero, arroces, pollo, pescado, pastas, postres, cócteles, sangría, vinos y licores. Precios en pesos colombianos.',
                 'og.jpg', 'page-menu', preload=hero_preload('pasta', 'pasta-m')) + HEADER + f'''
   <main>
     <section class="hero hero--short">
@@ -589,8 +615,8 @@ def page_menu():
         <div>
           <p class="lede">Entradas para compartir, cordero, arroces, pescado, pastas y una barra de cócteles y vinos. Precios en pesos colombianos.</p>
           <div class="hero__actions">
+            <a class="arrow-link on-dark" href="#menu-del-dia">Menú del día {ARROW}</a>
             <a class="arrow-link on-dark" href="{WA_RESERVA}" target="_blank" rel="noopener">Reservar mesa {ARROW}</a>
-            <a class="arrow-link on-dark" href="#cocteles">Tragos y bebidas {ARROW}</a>
           </div>
         </div>
       </div>
@@ -613,11 +639,11 @@ def page_menu():
       <div class="menu-band reveal">
         <div>
           <h3>¿Reservamos?</h3>
-          <p>Escríbenos por WhatsApp con la fecha, la hora y el número de personas. Si quieres un clandestino o celebras algo, cuéntanos desde ya.</p>
+          <p>Escríbenos por WhatsApp con la fecha, la hora y el número de personas. Si quieres el menú del día, un clandestino o celebras algo, cuéntanos desde ya.</p>
         </div>
         <div class="menu-band__actions">
           <a class="btn-outline" href="{WA_RESERVA}" target="_blank" rel="noopener">Reservar mesa</a>
-          <a class="btn-outline" href="{CANVA_DIA}" target="_blank" rel="noopener">Menú del día</a>
+          <a class="btn-outline" href="#menu-del-dia">Ver menú del día</a>
         </div>
       </div>
       <p class="menu-note">Precios en pesos colombianos (COP) según la carta vigente; pueden cambiar sin previo aviso. <span class="tag--veg" style="display:inline-block;width:11px;height:11px;vertical-align:-1px">{LEAF}</span> Opción vegana: se puede excluir cualquier producto de origen animal. Si eres intolerante o alérgico, avísanos: nuestras recetas contienen frutos secos, harinas, lácteos, mariscos, vegetales, frutas y picante, entre otros. Se prohíbe el expendio de bebidas embriagantes a menores de edad; el exceso de alcohol es perjudicial para la salud. <a href="{CANVA_CARTA}" target="_blank" rel="noopener">Ver la carta original</a>.</p>
@@ -715,7 +741,7 @@ def page_conoce():
           <ul class="feature__list reveal reveal-d2">
             <li>Opción vegana en entradas, ensaladas, sopas y pastas</li>
             <li>Avísanos si eres intolerante o alérgico: las recetas contienen frutos secos, harinas, lácteos, mariscos y picante</li>
-            <li>Cuencos de mediodía: la propuesta de almuerzo, publicada en el menú del día</li>
+            <li>Cuencos de mediodía: la propuesta de almuerzo disponible en el <a href="menu.html#menu-del-dia">menú del día</a></li>
           </ul>
           <a class="btn-solid reveal reveal-d3" href="{WA_EVENTO}" target="_blank" rel="noopener">Reservar por WhatsApp</a>
         </div>
