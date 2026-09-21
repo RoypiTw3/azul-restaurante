@@ -1,0 +1,9 @@
+# Material de trabajo
+_fuentes/originales/
+
+# Sistema operativo
+.DS_Store
+**/.DS_Store
+._*
+**/._*
+Thumbs.db
