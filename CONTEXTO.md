@@ -8,7 +8,7 @@ El restaurante **Azul · Cocina con aromas** (barrio San Antonio, Cali) no tení
 
 ## Estado actual
 
-Sitio estático (HTML/CSS/JS, sin framework ni build), verificado en 375 px (móvil) y 1440 px sin errores de consola. Falta publicarlo.
+Sitio estático (HTML/CSS/JS, sin framework ni build), verificado en 375 px (móvil) y 1440 px sin errores de consola. Publicado en GitHub Pages: https://roypitw3.github.io/azul-restaurante/ (repositorio https://github.com/RoypiTw3/azul-restaurante).
 
 ```
 azul/
@@ -68,7 +68,7 @@ azul/
 - Confirmar que las fotos de las tarjetas corresponden a los platos indicados (rollo de frutos secos, lomo con aromas al bosque, pasta al limón y camarón).
 - ¿Precios vigentes? La carta de Canva no tiene fecha.
 - ¿Cenas de Navidad 2026? Si aplica, agregar con su número (322 544 6498).
-- Publicación: crear repositorio en GitHub (RoypiTw3) y activar GitHub Pages, como https://roypitw3.github.io/koisushi/.
+- Publicación: Completada. Repositorio en https://github.com/RoypiTw3/azul-restaurante y sitio activo en https://roypitw3.github.io/azul-restaurante/.
 
 ## Cómo ver en local
 
